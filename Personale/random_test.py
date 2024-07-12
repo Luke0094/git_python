@@ -11,10 +11,10 @@ while partite_iniziali < partite_massime:
     if tiro > int(scelta):
         print(tiro)
         print("basso!")
-    if tiro == int(scelta):
+    elif tiro == int(scelta):
         print(tiro)
         print("patta!")
-    if tiro < int(scelta):
+    else:
         print(tiro)
         print("alto!")
     
