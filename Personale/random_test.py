@@ -8,7 +8,7 @@ while partite_iniziali < partite_massime:
     partite_iniziali += 1
     scelta = int(input("alto o basso? (Inserisci un numero tra 1 e 10)\n"))
 
-    if tiro >= int(scelta):
+    if tiro > int(scelta):
         print(tiro)
         print("basso!")
     elif tiro == int(scelta):
