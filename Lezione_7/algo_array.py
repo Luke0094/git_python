@@ -38,6 +38,7 @@ def remove(array, x):
             break
     return array
 
+#reverse 
 def reverse(array):
     return
 
