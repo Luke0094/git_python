@@ -33,12 +33,8 @@ def somma_x(*numeri):
 #cancella dall'array il primo elemento trovato uguale a x
 def remove(array, x):
     for i in range(len(array)):
-        print(array[index], x)
-        if [i] == x:
+        if array[i] == x:
             del array[i]
-            print[i]
-            del array[i]
-            print (x)
             break
     return array
 
