@@ -10,12 +10,16 @@ if min_n([8, -9, 3]) == 8:
 else:
     print("test 2 fallito")
 
-if avg_n([]) == 0:
+if max_n([]) == 0:
     print ("Test 3 superato")
 else:
     print("test 3 fallito")
 
-print (max_n([2, 3, 47, 77]))
+if remove ([1, 2, 3, 4], 1) == [2, 3, 4]:
+        print("test 4 superato")
+else:
+     print ("Test 4 fallito")
+
 print (min_n([2, 3, 47, 77]))
 print (avg_n([2, 3, 47, 77]))
 print(somma_x(2, 4, 5))

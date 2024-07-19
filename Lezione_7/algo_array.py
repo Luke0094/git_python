@@ -30,6 +30,24 @@ def somma_array(array):
 def somma_x(*numeri):
     return somma_array(list(numeri))
 
+#cancella dall'array il primo elemento trovato uguale a x
+def remove(array, x):
+    for i in range(len(array)):
+        if array[i] == x:
+            del array[i]
+            break
+    return array
+
+def reverse(array):
+    return
+
+def index(array, x):
+    return 0
+
+def concatenate(array, array2):
+    return 0
+
+
 print (max_n([2, 3, 47, 77]))
 print (min_n([2, 3, 47, 77]))
 print (avg_n([2, 3, 47, 77]))
