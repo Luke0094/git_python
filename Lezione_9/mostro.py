@@ -1,5 +1,5 @@
 class Mostro:
-    vivo= True
+    vivo = True
 
     def __init__(self, nome, pf):
         self.nome = nome
@@ -11,12 +11,12 @@ class Mostro:
     # mio_mostro.pf -= 3
 
     def ferisci(self, danni):
-        if self.vivo
-        print(self.nome, "subisce",danni, "danni")
-        print(self.nome,)
-    self.pf -= danni
-    if self.pf <= 0:
-        print("SONO MORTO!")
+        if self.vivo:
+            print(self.nome, "subisce",danni, "danni")
+            print(self.nome,)
+        self.pf -= danni
+        if self.pf <= 0:
+            print("SONO MORTO!")
         self.pf = 0
 
         

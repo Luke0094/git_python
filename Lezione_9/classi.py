@@ -10,7 +10,7 @@ class Personaggio:
         self.int = int
 
 
-    def set_nome(self, nuovo_nome)
+    def set_nome(self, nuovo_nome):
         self.nome = nuovo_nome
 
     def attacca(self):
@@ -27,7 +27,8 @@ class Ladro(Personaggio):
 
 
 class Mago(Personaggio):
-     def attacco_speciale
+     def attacco_speciale(self):
 
 
 class Guerriero(Personaggio):
+     def attacco_speciale(self):
