@@ -58,10 +58,31 @@ def main():
                 print("Tutti i clienti in coda sono stati serviti.")
 
         elif scelta == '6':
-            if not gestore.serve_cliente():
-                print("Impossibile servire il cliente.")
+            print("Seleziona una cassa per servire un cliente:")
+            for i, cassa in enumerate(gestore.casse):
+                stato = "chiusa" if not cassa.aperta else "aperta"
+                clienti_in_coda = cassa.clienti_in_coda
+                
+                if clienti_in_coda >= 1:
+                    print(f"{i + 1}. {cassa.nome_cassiere} ({stato}) - Clienti in coda: {clienti_in_coda}")
+                elif clienti_in_coda == 1:
+                    print(f"{i + 1}. {cassa.nome_cassiere} ({stato}) - 1 cliente in coda")
+                else:
+                    print(f"{i + 1}. {cassa.nome_cassiere} ({stato}) - Nessun cliente in coda")
+
+            indice_cassa = int(input("Inserisci il numero della cassa: ")) - 1
+
+            if 0 <= indice_cassa < len(gestore.casse):
+                cassa_selezionata = gestore.casse[indice_cassa]
+                if not cassa_selezionata.aperta:
+                    print(f"La cassa '{cassa_selezionata.nome_cassiere}' è chiusa. Impossibile servire clienti.")
+                else:
+                    if cassa_selezionata.avanti_cliente():
+                        print("Cliente servito con successo.")
+                    else:
+                        print("Impossibile servire il cliente dalla cassa selezionata.")
             else:
-                print("Cliente servito con successo.")
+                print("Selezione cassa non valida.")
 
         elif scelta == '7':
             indice = int(input("Inserisci il numero della cassa da chiudere (1-3): ")) - 1
@@ -82,6 +103,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
