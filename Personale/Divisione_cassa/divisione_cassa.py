@@ -96,6 +96,9 @@ class GestoreCoda(Soggetto):
             return clienti_rimossi
 
 class GestoreCasse(Osservatore):
+    Soglia_prima_apertura = 5
+    Soglia_seconda_apertura = 10
+
     def __init__(self):
         self.casse = [Cassa(f"Cassa {i + 1}", i + 1) for i in range(3)]
         self.gestore_coda = GestoreCoda()
@@ -127,10 +130,14 @@ class GestoreCasse(Osservatore):
 
     def controlla_apertura(self):
         clienti_totali = self._clienti_totali()
-        if clienti_totali > 5 and not self.casse[1].aperta:
-            print(Messaggio.formatta("apertura_richiesta", self.casse[1].nome))
-        if clienti_totali > 10 and not self.casse[2].aperta:
-            print(Messaggio.formatta("apertura_richiesta", self.casse[2].nome))
+        casse_chiuse = [cassa for cassa in self.casse if not cassa.aperta]
+        
+        if clienti_totali > self.Soglia_prima_apertura and len(casse_chiuse) >= 1:
+            print(Messaggio.formatta("apertura_richiesta", casse_chiuse[0].nome))
+        
+        if clienti_totali > self.Soglia_seconda_apertura and len(casse_chiuse) >= 2:
+            for cassa in casse_chiuse[1:]:
+                print(Messaggio.formatta("apertura_richiesta", cassa.nome))
 
     def ridistribuisci_clienti(self, clienti_extra=0):
         casse_aperte = [cassa for cassa in self.casse if cassa.aperta]
