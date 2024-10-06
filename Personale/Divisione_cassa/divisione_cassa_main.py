@@ -35,34 +35,42 @@ def main():
                 stato = "chiusa" if not cassa.aperta else "aperta"
                 clienti_in_coda = cassa.clienti_in_coda
                 print(f"{i + 1}. {cassa.nome} ({stato}) - Clienti in coda: {clienti_in_coda}")
+
             indice = int(input("Inserisci il numero della cassa a cui aggiungere i clienti (1-3), o premi '0' per tornare indietro: ")) - 1
             if indice == -1:
                 continue
+
             elif 0 <= indice < len(gestore.casse):
                 numero_clienti = int(input("Inserisci il numero di clienti da aggiungere: "))
                 gestore.aggiungi_clienti(numero_clienti, indice)
             else:
-                print("Selezione cassa non valida.")
-
+                print("Indice cassa non valido.")
 
         elif scelta == '4':
             for i, cassa in enumerate(gestore.casse):
                 stato = "chiusa" if not cassa.aperta else "aperta"
                 clienti_in_coda = cassa.clienti_in_coda
                 print(f"{i + 1}. {cassa.nome} ({stato}) - Clienti in coda: {clienti_in_coda}")
+
             indice_da = int(input("Inserisci il numero della cassa da cui spostare i clienti (1-3), o premi '0' per tornare indietro: ")) - 1
             if indice_da == -1:
                 continue
-            else:
-                indice_a = int(input("Inserisci il numero della cassa a cui spostare i clienti (1-3), o premi '0' per annullare: ")) - 1
-                if indice_a == -1:
-                    continue
-                else:
-                    numero_clienti = int(input("Inserisci il numero di clienti da spostare: "))
-                    if 0 <= indice_da < len(gestore.casse) and 0 <= indice_a < len(gestore.casse):
-                        gestore.sposta_clienti(indice_da, indice_a, numero_clienti)
-                    else:
-                        print("Selezione cassa non valida.")
+
+            if not (0 <= indice_da < len(gestore.casse)):
+                print("Indice cassa non valido.")
+                continue
+
+            indice_a = int(input("Inserisci il numero della cassa a cui spostare i clienti (1-3), o premi '0' per annullare: ")) - 1
+            if indice_a == -1:
+                continue
+
+            if not (0 <= indice_a < len(gestore.casse)):
+                print("Indice cassa non valido.")
+                continue
+
+            numero_clienti = int(input("Inserisci il numero di clienti da spostare: "))
+            gestore.sposta_clienti(indice_da, indice_a, numero_clienti)
+
 
         elif scelta == '5':
             print("Servendo tutti i clienti in coda...")
@@ -104,7 +112,7 @@ def main():
                     cassa_selezionata.servi_cliente()
                     print("Cliente servito con successo.")
             else:
-                print("Selezione cassa non valida.")
+                print("Indice cassa non valido.")
 
         elif scelta == '7':
             indice = int(input("Inserisci il numero della cassa da chiudere (1-3), o premi '0' per tornare indietro: ")) - 1
