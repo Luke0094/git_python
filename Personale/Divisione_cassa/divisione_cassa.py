@@ -49,8 +49,10 @@ class Cassa(Soggetto):
         if self.stato == "chiusa":
             self.stato = "aperta"
             self.notifica_osservatori(("cassa_stato", f"{self.nome},ora aperta"))
+            return True
         else:
             self.notifica_osservatori(("cassa_stato", f"{self.nome},già aperta"))
+            return False
 
     def chiudi(self):
         if self.stato == "aperta":
@@ -114,8 +116,7 @@ class GestoreCasse(Osservatore):
 
     def apri_cassa(self, indice):
         if 0 <= indice < len(self.casse):
-            self.casse[indice].apri()
-            if self.casse[indice].stato == "aperta":
+            if self.casse[indice].apri():
                 self.ridistribuisci_clienti()
         else:
             print("Indice cassa non valido.")
@@ -165,7 +166,7 @@ class GestoreCasse(Osservatore):
         if not casse_aperte:
             self.gestore_coda.aggiungi_clienti(numero)
             print(Messaggio.formatta("coda_generale_aggiunta", str(numero)))
-        elif indice is not None and 0 <= indice < len(self.casse) and self.casse[indice].stato == "aperta":
+        elif indice is not None and 0 <= indice < len(self.casse):
             self.casse[indice].aggiungi_clienti(numero)
         else:
             cassa_scelta = random.choice(casse_aperte)
