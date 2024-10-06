@@ -36,26 +36,26 @@ class Soggetto:
             osservatore.aggiorna(messaggio)
 
 class Cassa(Soggetto):
-    def __init__(self, nome, posizione):
-        super().__init__()
+    def __init__(self, nome, posizione, stato="chiusa"):
+        self._osservatori = []
         self.nome = nome
         self.posizione = posizione
-        self.aperta = False
+        self.stato = stato
         self.clienti_in_coda = 0
         self.incasso = 0
         self.clienti_gestiti = 0
 
     def apri(self):
-        if not self.aperta:
-            self.aperta = True
+        if self.stato == "chiusa":
+            self.stato = "aperta"
             self.notifica_osservatori(("cassa_stato", f"{self.nome},ora aperta"))
         else:
             self.notifica_osservatori(("cassa_stato", f"{self.nome},già aperta"))
 
     def chiudi(self):
-        if self.aperta:
+        if self.stato == "aperta":
             clienti_da_ridistribuire = self.clienti_in_coda
-            self.aperta = False
+            self.stato = "chiusa"
             self.clienti_in_coda = 0
             self.notifica_osservatori(("cassa_stato", f"{self.nome},ora chiusa"))
             return clienti_da_ridistribuire
@@ -64,7 +64,7 @@ class Cassa(Soggetto):
             return 0
 
     def servi_cliente(self):
-        if self.aperta and self.clienti_in_coda > 0:
+        if self.stato == "aperta" and self.clienti_in_coda > 0:
             self.clienti_in_coda -= 1
             incasso_cliente = random.randint(1, 50)
             self.incasso += incasso_cliente
@@ -79,7 +79,7 @@ class Cassa(Soggetto):
 
 class GestoreCoda(Soggetto):
     def __init__(self):
-        super().__init__()
+        self._osservatori = []
         self.coda_generale = 0
 
     def aggiungi_clienti(self, numero):
@@ -115,7 +115,7 @@ class GestoreCasse(Osservatore):
     def apri_cassa(self, indice):
         if 0 <= indice < len(self.casse):
             self.casse[indice].apri()
-            if self.casse[indice].aperta:
+            if self.casse[indice].stato == "aperta":
                 self.ridistribuisci_clienti()
         else:
             print("Indice cassa non valido.")
@@ -130,7 +130,7 @@ class GestoreCasse(Osservatore):
 
     def controlla_apertura(self):
         clienti_totali = self._clienti_totali()
-        casse_chiuse = [cassa for cassa in self.casse if not cassa.aperta]
+        casse_chiuse = [cassa for cassa in self.casse if cassa.stato == "chiusa"]
         
         if clienti_totali > self.Soglia_prima_apertura and len(casse_chiuse) >= 1:
             print(Messaggio.formatta("apertura_richiesta", casse_chiuse[0].nome))
@@ -140,7 +140,7 @@ class GestoreCasse(Osservatore):
                 print(Messaggio.formatta("apertura_richiesta", cassa.nome))
 
     def ridistribuisci_clienti(self, clienti_extra=0):
-        casse_aperte = [cassa for cassa in self.casse if cassa.aperta]
+        casse_aperte = [cassa for cassa in self.casse if cassa.stato == "aperta"]
         clienti_totali = sum(cassa.clienti_in_coda for cassa in casse_aperte) + self.gestore_coda.coda_generale + clienti_extra
         
         if not casse_aperte:
@@ -160,12 +160,12 @@ class GestoreCasse(Osservatore):
             print(Messaggio.formatta("clienti_ridistribuiti", str(clienti_totali)))
 
     def aggiungi_clienti(self, numero, indice=None):
-        casse_aperte = [cassa for cassa in self.casse if cassa.aperta]
+        casse_aperte = [cassa for cassa in self.casse if cassa.stato == "aperta"]
         
         if not casse_aperte:
             self.gestore_coda.aggiungi_clienti(numero)
             print(Messaggio.formatta("coda_generale_aggiunta", str(numero)))
-        elif indice is not None and 0 <= indice < len(self.casse) and self.casse[indice].aperta:
+        elif indice is not None and 0 <= indice < len(self.casse) and self.casse[indice].stato == "aperta":
             self.casse[indice].aggiungi_clienti(numero)
         else:
             cassa_scelta = random.choice(casse_aperte)
@@ -187,8 +187,7 @@ class GestoreCasse(Osservatore):
 
     def visualizza_stato(self):
         for cassa in self.casse:
-            stato = "aperta" if cassa.aperta else "chiusa"
-            print(f"{cassa.nome} è {stato}. "
+            print(f"{cassa.nome} è {cassa.stato}. "
                   f"Clienti in coda: {cassa.clienti_in_coda}, "
                   f"Clienti gestiti: {cassa.clienti_gestiti}, "
                   f"Incasso: {cassa.incasso} euro")
