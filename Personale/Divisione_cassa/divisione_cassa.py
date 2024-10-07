@@ -100,6 +100,7 @@ class GestoreCoda(Soggetto):
 class GestoreCasse(Osservatore):
     Soglia_prima_apertura = 5
     Soglia_seconda_apertura = 10
+    Soglia_ridistribuzione = 5
 
     def __init__(self):
         self.casse = [Cassa(f"Cassa {i + 1}", i + 1) for i in range(3)]
@@ -125,12 +126,17 @@ class GestoreCasse(Osservatore):
         if 0 <= indice < len(self.casse):
             clienti_da_ridistribuire = self.casse[indice].chiudi()
             if clienti_da_ridistribuire > 0:
-                self.ridistribuisci_clienti(clienti_da_ridistribuire)
+                casse_aperte = [cassa for cassa in self.casse if cassa.stato == "aperta"]
+                if not casse_aperte:
+                    self.gestore_coda.aggiungi_clienti(clienti_da_ridistribuire)
+                    print(Messaggio.formatta("coda_generale_aggiunta", str(clienti_da_ridistribuire)))
+                else:
+                    self.ridistribuisci_clienti(clienti_da_ridistribuire, dalla_chiusura=True)
         else:
             print("Indice cassa non valido.")
 
     def controlla_apertura(self):
-        clienti_totali = self._clienti_totali()
+        clienti_totali = self._clienti_totali() + self.gestore_coda.coda_generale
         casse_chiuse = [cassa for cassa in self.casse if cassa.stato == "chiusa"]
         
         if clienti_totali > self.Soglia_prima_apertura and len(casse_chiuse) >= 1:
@@ -140,25 +146,33 @@ class GestoreCasse(Osservatore):
             for cassa in casse_chiuse[1:]:
                 print(Messaggio.formatta("apertura_richiesta", cassa.nome))
 
-    def ridistribuisci_clienti(self, clienti_extra=0):
+    def ridistribuisci_clienti(self, clienti_extra=0, dalla_chiusura=False):
         casse_aperte = [cassa for cassa in self.casse if cassa.stato == "aperta"]
         clienti_totali = sum(cassa.clienti_in_coda for cassa in casse_aperte) + self.gestore_coda.coda_generale + clienti_extra
         
         if not casse_aperte:
-            if clienti_totali > 5:
+            if clienti_totali > 0:
                 self.gestore_coda.aggiungi_clienti(clienti_totali)
+                if not dalla_chiusura:
+                    print(Messaggio.formatta("coda_generale_aggiunta", str(clienti_totali)))
+            return
+
+        if clienti_totali <= self.Soglia_ridistribuzione:
             return
 
         clienti_per_cassa, resto = divmod(clienti_totali, len(casse_aperte))
         
+        squilibrio = max(abs(cassa.clienti_in_coda - clienti_per_cassa) for cassa in casse_aperte)
+        if squilibrio <= 2:
+            return
+
         for cassa in casse_aperte:
             cassa.clienti_in_coda = clienti_per_cassa + (1 if resto > 0 else 0)
             resto -= 1 if resto > 0 else 0
 
         self.gestore_coda.coda_generale = 0
 
-        if clienti_totali > 0:
-            print(Messaggio.formatta("clienti_ridistribuiti", str(clienti_totali)))
+        print(Messaggio.formatta("clienti_ridistribuiti", str(clienti_totali)))
 
     def aggiungi_clienti(self, numero, indice=None):
         casse_aperte = [cassa for cassa in self.casse if cassa.stato == "aperta"]
@@ -172,6 +186,7 @@ class GestoreCasse(Osservatore):
             cassa_scelta = random.choice(casse_aperte)
             cassa_scelta.aggiungi_clienti(numero)
 
+        self.ridistribuisci_clienti()
         self.controlla_apertura()
 
     def sposta_clienti(self, indice_da, indice_a, numero_clienti):

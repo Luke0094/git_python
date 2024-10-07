@@ -56,8 +56,16 @@ def main():
                 print("Indice cassa non valido.")
                 continue
 
+            if gestore.casse[indice_da].clienti_in_coda == 0:
+                print("Non ci sono clienti da spostare in questa cassa.")
+                continue
+
             indice_a = int(input("Inserisci il numero della cassa a cui spostare i clienti (1-3), o premi '0' per annullare: ")) - 1
             if indice_a == -1:
+                continue
+
+            if indice_da == indice_a:
+                print("Impossibile spostare i clienti nella stessa cassa di provenienza.")
                 continue
 
             if not (0 <= indice_a < len(gestore.casse)):
