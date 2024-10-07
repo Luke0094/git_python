@@ -131,7 +131,6 @@ class GestoreCasse(Osservatore):
             casse_aperte = self._casse_aperte()
             if clienti_da_ridistribuire > 0:
                 if not casse_aperte:
-                    self.gestore_coda.aggiungi_clienti(clienti_da_ridistribuire)
                     print(Messaggio.formatta("coda_generale_aggiunta", str(clienti_da_ridistribuire)))
                 else:
                     self.ridistribuisci_clienti(clienti_da_ridistribuire)
@@ -184,7 +183,6 @@ class GestoreCasse(Osservatore):
                 self.casse[indice].aggiungi_clienti(numero)
                 self.ridistribuisci_clienti()
             else:
-                self.casse[indice].aggiungi_clienti(numero)
                 print(f"{numero} clienti aggiunti alla {self.casse[indice].nome} (chiusa)")
         elif not casse_aperte:
             self.gestore_coda.aggiungi_clienti(numero)
