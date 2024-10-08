@@ -1,4 +1,4 @@
-from divisione_cassa import GestoreCasse
+from old_divisione_cassa import GestoreCasse
 
 def main():
     gestore = GestoreCasse()
