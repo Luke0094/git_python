@@ -144,7 +144,7 @@ class GestoreCasse:
         for cassa in self.casse:
             if cassa.stato == "chiusa":
                 clienti_totali += cassa.clienti_in_coda
-                cassa.rimuovi_clienti(cassa.clienti_in_coda) 
+                cassa.rimuovi_clienti(cassa.clienti_in_coda)  # Rimuovi eventuali clienti dalle casse chiuse
 
         clienti_totali += self._clienti_totali() + self.gestore_coda.coda_generale
 
@@ -184,12 +184,16 @@ class GestoreCasse:
 
         self.controlla_apertura()
 
+    # Reinserito controllo sul numero di clienti spostabili
     def sposta_clienti(self, indice_da, indice_a, numero_clienti):
         if 0 <= indice_da < len(self.casse) and 0 <= indice_a < len(self.casse):
             cassa_da, cassa_a = self.casse[indice_da], self.casse[indice_a]
-            clienti_rimossi = cassa_da.rimuovi_clienti(numero_clienti)
-            cassa_a.clienti_in_coda += clienti_rimossi
-            print(Messaggio().formatta("clienti_spostati", f"{clienti_rimossi},{cassa_da.nome},{cassa_a.nome}"))
+            if numero_clienti <= cassa_da.clienti_in_coda:
+                clienti_rimossi = cassa_da.rimuovi_clienti(numero_clienti)
+                cassa_a.clienti_in_coda += clienti_rimossi
+                print(Messaggio().formatta("clienti_spostati", f"{clienti_rimossi},{cassa_da.nome},{cassa_a.nome}"))
+            else:
+                print(f"Numero di clienti da spostare superiore ai clienti in coda ({cassa_da.clienti_in_coda})")
         else:
             print("Indici cassa non validi.")
 
