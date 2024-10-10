@@ -18,12 +18,17 @@ def main():
         print("9. Esci")
 
         scelta = input("Seleziona un'opzione: ")
-        
+
         if scelta == '1':
             for i, cassa in enumerate(gestore.casse):
                 print(f"{i + 1}. {cassa.nome} ({cassa.stato}) - Clienti in coda: {cassa.clienti_in_coda}")
 
-            indice = int(input("Inserisci il numero della cassa da aprire (1-3), o premi '0' per tornare indietro: ")) - 1
+            indice = input("Inserisci il numero della cassa da aprire (1-3), o premi '0' per tornare indietro: ")
+            if indice == '' or not indice.isdigit():
+                print("Indice cassa non valido.")
+                continue
+            
+            indice = int(indice) - 1
             if indice == -1:
                 continue
             gestore.apri_cassa(indice)
@@ -37,11 +42,16 @@ def main():
             for i, cassa in enumerate(gestore.casse):
                 print(f"{i + 1}. {cassa.nome} ({cassa.stato}) - Clienti in coda: {cassa.clienti_in_coda}")
 
-            indice = int(input("Inserisci il numero della cassa a cui aggiungere i clienti (1-3), o premi '0' per tornare indietro: ")) - 1
+            indice = input("Inserisci il numero della cassa a cui aggiungere i clienti (1-3), o premi '0' per tornare indietro: ")
+            if indice == '' or not indice.isdigit():
+                print("Indice cassa non valido.")
+                continue
+            
+            indice = int(indice) - 1
             if indice == -1:
                 continue
-
-            elif 0 <= indice < len(gestore.casse):
+            
+            if 0 <= indice < len(gestore.casse):
                 numero_clienti = int(input("Inserisci il numero di clienti da aggiungere: "))
                 gestore.aggiungi_clienti(numero_clienti, indice)
             else:
@@ -51,10 +61,15 @@ def main():
             for i, cassa in enumerate(gestore.casse):
                 print(f"{i + 1}. {cassa.nome} ({cassa.stato}) - Clienti in coda: {cassa.clienti_in_coda}")
 
-            indice_da = int(input("Inserisci il numero della cassa da cui spostare i clienti (1-3), o premi '0' per tornare indietro: ")) - 1
+            indice_da = input("Inserisci il numero della cassa da cui spostare i clienti (1-3), o premi '0' per tornare indietro: ")
+            if indice_da == '' or not indice_da.isdigit():
+                print("Indice cassa non valido.")
+                continue
+            
+            indice_da = int(indice_da) - 1
             if indice_da == -1:
                 continue
-
+            
             if not (0 <= indice_da < len(gestore.casse)):
                 print("Indice cassa non valido.")
                 continue
@@ -63,7 +78,12 @@ def main():
                 print("Non ci sono clienti da spostare in questa cassa.")
                 continue
 
-            indice_a = int(input("Inserisci il numero della cassa a cui spostare i clienti (1-3), o premi '0' per annullare: ")) - 1
+            indice_a = input("Inserisci il numero della cassa a cui spostare i clienti (1-3), o premi '0' per annullare: ")
+            if indice_a == '' or not indice_a.isdigit():
+                print("Indice cassa non valido.")
+                continue
+            
+            indice_a = int(indice_a) - 1
             if indice_a == -1:
                 continue
 
@@ -103,9 +123,15 @@ def main():
             print("Seleziona una cassa per servire un cliente:")
             for i, cassa in enumerate(gestore.casse):
                 print(f"{i + 1}. {cassa.nome} ({cassa.stato}) - Clienti in coda: {cassa.clienti_in_coda}")
-            indice_cassa = int(input("Inserisci il numero della cassa, o premi '0' per tornare indietro: ")) - 1
+            indice_cassa = input("Inserisci il numero della cassa, o premi '0' per tornare indietro: ")
+            if indice_cassa == '' or not indice_cassa.isdigit():
+                print("Indice cassa non valido.")
+                continue
+            
+            indice_cassa = int(indice_cassa) - 1
             if indice_cassa == -1:
                 continue
+            
             if 0 <= indice_cassa < len(gestore.casse):
                 cassa_selezionata = gestore.casse[indice_cassa]
                 if cassa_selezionata.stato == "chiusa":
@@ -122,9 +148,15 @@ def main():
             for i, cassa in enumerate(gestore.casse):
                 print(f"{i + 1}. {cassa.nome} ({cassa.stato}) - Clienti in coda: {cassa.clienti_in_coda}")
                 
-            indice = int(input("Inserisci il numero della cassa da chiudere (1-3), o premi '0' per tornare indietro: ")) - 1
+            indice = input("Inserisci il numero della cassa da chiudere (1-3), o premi '0' per tornare indietro: ")
+            if indice == '' or not indice.isdigit():
+                print("Indice cassa non valido.")
+                continue
+            
+            indice = int(indice) - 1
             if indice == -1:
                 continue
+            
             gestore.chiudi_cassa(indice)
 
         elif scelta == '8':
