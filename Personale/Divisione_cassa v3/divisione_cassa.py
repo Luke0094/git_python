@@ -60,6 +60,14 @@ class Cassa:
         else:
             print(Messaggio().formatta("clienti_aggiunti", f"{numero},{self.nome}"))
 
+    def rimuovi_clienti(self, numero):
+        if numero <= self.clienti_in_coda:
+            self.clienti_in_coda -= numero
+            return numero
+        clienti_rimossi = self.clienti_in_coda
+        self.clienti_in_coda = 0
+        return clienti_rimossi
+
 class GestoreCoda:
     def __init__(self):
         self.coda_generale = 0
@@ -90,6 +98,7 @@ class GestoreCasse:
 
     def _casse_aperte(self):
         return [cassa for cassa in self.casse if cassa.stato == "aperta"]
+
     def apri_cassa(self, indice):
         if 0 <= indice < len(self.casse):
             if self.casse[indice].apri():
@@ -104,8 +113,10 @@ class GestoreCasse:
 
     def chiudi_cassa(self, indice):
         if 0 <= indice < len(self.casse):
-            clienti_da_ridistribuire = self.casse[indice].chiudi()
+            clienti_da_ridistribuire = self.casse[indice].rimuovi_clienti(self.casse[indice].clienti_in_coda)
+            self.casse[indice].chiudi()
             casse_aperte = self._casse_aperte()
+
             if clienti_da_ridistribuire > 0:
                 if not casse_aperte:
                     self.gestore_coda.aggiungi_clienti(clienti_da_ridistribuire)
@@ -128,7 +139,14 @@ class GestoreCasse:
 
     def ridistribuisci_clienti(self, clienti_extra=0):
         casse_aperte = self._casse_aperte()
-        clienti_totali = self._clienti_totali() + self.gestore_coda.coda_generale + clienti_extra
+        clienti_totali = clienti_extra
+
+        for cassa in self.casse:
+            if cassa.stato == "chiusa":
+                clienti_totali += cassa.clienti_in_coda
+                cassa.rimuovi_clienti(cassa.clienti_in_coda) 
+
+        clienti_totali += self._clienti_totali() + self.gestore_coda.coda_generale
 
         if not casse_aperte:
             if clienti_totali > 0:
@@ -169,12 +187,9 @@ class GestoreCasse:
     def sposta_clienti(self, indice_da, indice_a, numero_clienti):
         if 0 <= indice_da < len(self.casse) and 0 <= indice_a < len(self.casse):
             cassa_da, cassa_a = self.casse[indice_da], self.casse[indice_a]
-            if cassa_da.clienti_in_coda >= numero_clienti:
-                cassa_da.clienti_in_coda -= numero_clienti
-                cassa_a.clienti_in_coda += numero_clienti
-                print(Messaggio().formatta("clienti_spostati", f"{numero_clienti},{cassa_da.nome},{cassa_a.nome}"))
-            else:
-                print("Numero di clienti da spostare superiore ai clienti in coda.")
+            clienti_rimossi = cassa_da.rimuovi_clienti(numero_clienti)
+            cassa_a.clienti_in_coda += clienti_rimossi
+            print(Messaggio().formatta("clienti_spostati", f"{clienti_rimossi},{cassa_da.nome},{cassa_a.nome}"))
         else:
             print("Indici cassa non validi.")
 
