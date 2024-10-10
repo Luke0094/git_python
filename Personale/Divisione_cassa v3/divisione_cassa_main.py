@@ -106,19 +106,27 @@ def main():
             if not casse_con_clienti:
                 print("Non ci sono clienti da servire in nessuna cassa.")
             else:
+                casse_aperte = [cassa for cassa in casse_con_clienti if cassa.stato == "aperta"]
+                if not casse_aperte:
+                    print("Tutte le casse con clienti sono chiuse.")
+                else:
+                    while casse_aperte:
+                        cassa = random.choice(casse_aperte)
+                        if cassa.clienti_in_coda > 0:
+                            cassa.servi_cliente()
+                            clienti_serviti += 1
+                        else:
+                            casse_aperte.remove(cassa)
+                    
+                    print(f"{clienti_serviti} clienti sono stati serviti.")
+                
                 for cassa in casse_con_clienti:
                     if cassa.stato == "chiusa":
                         print(f"La cassa '{cassa.nome}' è chiusa. Impossibile servire {cassa.clienti_in_coda} clienti in coda.")
-                    else:
-                        while cassa.clienti_in_coda > 0:
-                            cassa = random.choice(casse_con_clienti)
-                            cassa.servi_cliente()
-                            clienti_serviti += 1
-                
-                if clienti_serviti > 0:
-                    print(f"{clienti_serviti} clienti sono stati serviti.")
-                else:
-                    print("Nessun cliente è stato servito. Tutte le casse con clienti sono chiuse.")
+
+            clienti_non_serviti = gestore._clienti_totali()
+            if clienti_non_serviti > 0:
+                print(f"Ci sono ancora {clienti_non_serviti} clienti in coda.")
 
         elif scelta == '6':
             print("Seleziona una cassa per servire un cliente:")
