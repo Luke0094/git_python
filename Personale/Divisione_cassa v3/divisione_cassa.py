@@ -154,7 +154,7 @@ class GestoreCasse:
                 self.casse[indice].aggiungi_clienti(numero)
                 self.ridistribuisci_clienti()
             else:
-                self.gestore_coda.aggiungi_clienti(numero)
+                self.casse[indice].clienti_in_coda += numero
                 print(Messaggio().formatta("clienti_aggiunti", f"{numero},{self.casse[indice].nome} (chiusa)"))
         elif not casse_aperte:
             self.gestore_coda.aggiungi_clienti(numero)
