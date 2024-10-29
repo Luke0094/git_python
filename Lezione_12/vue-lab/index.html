@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <style>
+        .rosso{
+            color: crimson;
+        }
+    </style>
+    <div id="app">
+        <h2> :class="{ rosso: <message class="leght"> 10}">{{ message }}</h2>
+        <p> v-for="sub in subs">
+        {{ sub }}
+        </p>
+        <input type="text" v-model="message" :class=""{ rosso: true }>
+        <button> @click="message='tunz'"</button>
+        </div>
+</body>
+</html>
